@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <video src="video/angrybirds.mp4" id="video"></video>
+    <button onclick="showControls()">显示控制按钮</button>
+    <script>
+        function showControls(){
+            var videoEle = document.getElementById('video');
+            videoEle.controls = true;
+        }
+    </script>
+</body>
+</html>

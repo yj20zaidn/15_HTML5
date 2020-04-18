@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            position: relative;
+            width:856px;
+            height:480px;
+            margin:0 auto;
+        }
+        #ad-container{
+            position: absolute;
+            width: 400px;
+            height: 300px;
+            left:50%;
+            top:50%;
+            margin-left: -200px;
+            margin-top: -150px;
+        }
+        #progress{
+            height: 3px;
+            width:0;
+            background-color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="ad-container">
+            <img src="ad/0D0100005E42288F9115223570333345.jpg">
+        </div>
+        <video src="video/angrybirds.mp4" id="video" width="856"></video>
+        <!-- 进度长 -->
+        <div id="progress"></div>
+        <div id="progressText">0%</div>
+        <p>
+        <button onclick="play()">播放</button>
+        <button onclick="pause(event)">暂停</button>
+        <button onclick="decreVol()">减少音量</button>
+        <button onclick="increVol()">增大音量</button>
+        <button onclick="rate(1)">1.0倍速</button>
+        <button onclick="rate(2)">2.0倍速</button>
+        当前时间：<span id="current"></span>
+        /
+        总时长<span id="total"></span>
+        </p>
+    </div>
+    <script>
+        function rate(value){
+            var videoEle = document.getElementById('video');
+            videoEle.playbackRate = value;
+        }
+        var images =[
+            '0D0100005E0DB3591241923143384738.jpg',
+            '0D0100005E2EF493395059357930375A.jpg',
+            '0D0100005E4DDCB31126293290574D55.jpg',
+            '0D0100005E5DD1A639505936024C5356.jpg',
+            '0D0100005E40CB833950593579383235.jpg',
+            '0D0100005E254C951831383513533435.jpg',
+            '0D0100005E4149B13950593579363944.jpg',
+            '0D0100005E42288F9115223570333345.jpg',
+            '0D0100005E588109395059360246315A.jpg',
+            '0D0100005E8591E2395059446436414F.jpg'
+        ];
+        var videoEle = document.getElementById('video');
+        //当从服务器获取到关于媒体足够多信息后(如宽度、高度、总长度，媒体编码等)
+        videoEle.addEventListener('canplaythrough',()=>{
+            //console.log(videoEle);
+            //总时长元素
+            var totalEle = document.getElementById('total');
+            //当前播放时间的元素
+            var currentEle = document.getElementById('current');
+            //获取媒体的总长度
+            totalEle.innerText = parseInt(videoEle.duration);
+            //获取媒体的当前播放时间
+            currentEle.innerText = parseInt(videoEle.currentTime);
+        });
+        //每当播放时间发生改变时,就修改<span id="current"></span>中的内容
+        videoEle.addEventListener('timeupdate',()=>{
+            //当前播放时间的元素
+            var currentEle = document.getElementById('current');
+            //获取媒体的当前播放时间
+             currentEle.innerText = parseInt(videoEle.currentTime);
+            //控制进度条的宽度
+            document.getElementById('progress').style.width = Math.floor(videoEle.width * (videoEle.currentTime / videoEle.duration)) + 'px';
+            //显示播放进度(百分比)
+            document.getElementById('progressText').innerText = parseInt((videoEle.currentTime / videoEle.duration) * 100) + '%';
+        });
+
+        //媒体播放时隐藏广告位
+        videoEle.addEventListener('play',()=>{
+            document.getElementById('ad-container').style.display = 'none';
+           
+        });
+
+        //媒体暂停时显示广告位
+        videoEle.addEventListener('pause',()=>{
+            //随机抽取的广告图像
+
+            var ad = images[Math.floor(Math.random()*images.length)];
+
+            document.getElementById('ad-container').style.display = 'block';
+
+            document.getElementById('ad-container').querySelector('img').src = 'ad/' + ad;
+        });
+
+        //通过键盘的空格键来控制媒体的播放或暂停
+        document.addEventListener('keydown',(e)=>{
+            if(e.keyCode == 32){
+                //暂停或播放
+                if(videoEle.paused){
+                    videoEle.play();
+                } else {
+                    videoEle.pause();
+                }
+            }
+        });
+
+        //播放媒体
+        function play(){
+            var videoEle = document.getElementById('video');
+            videoEle.play();
+        }
+         //暂停媒体
+         function pause(event){
+            
+            var videoEle = document.getElementById('video');
+            videoEle.pause();
+            //按钮失去焦点
+            event.target.blur();
+        }
+        //增加音量
+        function increVol(){
+            var videoEle = document.getElementById('video');
+            //console.log(videoEle.volume);
+            if(videoEle.volume >= 1) return;
+            videoEle.volume += 0.1;
+        }
+        //减少音量
+        function decreVol(){
+            var videoEle = document.getElementById('video');
+            //console.log(videoEle.volume);
+            if(videoEle.volume <= 0.1) return;
+            videoEle.volume -= 0.1;
+        }
+    </script>
+</body>
+</html>

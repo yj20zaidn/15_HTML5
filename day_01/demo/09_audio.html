@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <audio controls id="audio"></audio>
+    </div>
+    <div>
+        <button onclick="play('bad')">Bad</button>
+        <button onclick="play('stronger')">Stronger</button>
+    </div>
+    <script>
+        function play(music){
+            //获取音频对象
+            var audioEle = document.getElementById('audio');
+            //设置音频文件URL地址
+            audioEle.src = 'audio/' + music + '.mp3';
+            //播放音频文件
+            audioEle.play();
+        }
+    </script>
+</body>
+</html>
