@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #canvas{
+            display: block;
+            margin:0 auto;
+            border:1px solid #f00;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script src="scripts/colors.js"></script>
+    <script>
+        var canvasEle = document.getElementById('canvas');
+        //设置canvas的宽度和高度
+        canvasEle.width = 600;
+        canvasEle.height = 500;
+        //返回CanvasRenderingContext2D对象(二维渲染对象)
+        var ctx = canvasEle.getContext('2d');
+        //X轴坐标起点
+        var x = 0;
+        //Y轴坐标起点
+        var y = 0;
+        //X轴移动距离
+        var xDistance = 10;
+        //Y轴移动距离
+        var yDistance = 5;
+        //随机抽取描边颜色
+        var color = colors[Math.floor(Math.random() * colors.length)];
+        //指定间隔时间来绘制矩形框
+        window.setInterval(()=>{
+            //擦除之前绘制的所有内容
+            ctx.clearRect(0,0,canvasEle.width,canvasEle.height);
+            //设置描边颜色
+            ctx.strokeStyle = color;
+            //绘制矩形框
+            ctx.strokeRect(x,y,100,100);
+            x += xDistance;
+            y += yDistance;
+            if(x >= 500){
+                xDistance = -10;
+                color = colors[Math.floor(Math.random() * colors.length)];
+            } else if (x <= 0){
+                xDistance = 10;
+                color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            if(y >= 400){
+                yDistance = -5;
+                color = colors[Math.floor(Math.random() * colors.length)];
+            } else if (y <= 0){
+                yDistance = 5;
+                color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+        },20);
+        
+    </script>
+</body>
+</html>

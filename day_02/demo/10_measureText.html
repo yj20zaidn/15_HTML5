@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #canvas{
+            display: block;
+            margin:0 auto;
+            border:1px solid #f00;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        var canvasEle = document.getElementById('canvas');
+        //设置canvas的宽度和高度
+        canvasEle.width = 600;
+        canvasEle.height = 500;
+        //返回CanvasRenderingContext2D对象(二维渲染对象)
+        var ctx = canvasEle.getContext('2d');
+        ctx.font = '24px Microsoft Yahei';
+        console.log(ctx.measureText('中华人民共和国'));
+    </script>
+</body>
+</html>

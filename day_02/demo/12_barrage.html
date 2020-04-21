@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            position: relative;
+            width:856px;
+            margin:0 auto;
+        }
+        #barrages{
+            position: absolute;
+            left:0;
+            top:0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div>
+            <video src="video/angrybirds.mp4" id="video"></video>
+        </div>
+        <p>
+            <button onclick="start()">播放视频</button>
+            <button onclick="pause()">播放视频</button>
+        </p>
+        <div id="barrages">
+            <canvas width="856" height="440" id="canvas"></canvas>
+        </div>
+    </div>
+    
+    <p style="text-align: center;">
+        内容:<input type="text" id="text">
+        颜色:
+        <select id="color">
+            <option value="#000">黑色</option>
+            <option value="#f00">红色</option>
+            <option value="#0f0">绿色</option>
+            <option value="#00f">蓝色</option>
+        </select>
+        字号:
+        <select id="size">
+            <option value="12px">极小</option>
+            <option value="16px">适中</option>
+            <option value="24px">超大</option>
+        </select>
+    </p>
+    <p style="text-align: center;">
+        <button onclick="play()">发射弹幕</button>
+    </p>
+    <script>
+        var timerId ;
+        function start(){
+            var videoEle = document.getElementById('video');
+            videoEle.play();
+        }
+        function pause(){
+            var videoEle = document.getElementById('video');
+            videoEle.pause();
+            window.cancelAnimationFrame(timerId);
+        }
+        //弹幕的总数
+        var count = 20;
+        //requestAnimationFrame的ID
+        var timerId;
+        var canvasEle = document.getElementById('canvas');
+        var ctx = canvasEle.getContext('2d');
+        //存储弹幕文本的完整信息(每个文本包含内容、坐标、速度、颜色等) 
+        var barrages = [];
+        //绘制弹幕
+        function  draw(){
+            //console.log(barrages);
+            //擦除画布之前绘制的所有内容
+            ctx.clearRect(0,0,canvasEle.width,canvasEle.height);
+            //循环绘制弹幕
+            barrages.forEach((item)=>{
+                //修改填充颜色
+                ctx.fillStyle = item.color;
+                //修改字体属性
+                ctx.font = item.size + ' Microsoft Yahei';
+                //速度
+                item.x -= item.speed;
+                ctx.fillText(item.text,item.x,item.y);
+                //判断文本的水平位置
+                if(item.x < -(ctx.measureText(item.text).width)){
+                    item.x = canvasEle.width;
+                }
+            }); 
+
+           timerId = window.requestAnimationFrame(draw);
+        }
+        draw();
+        function play(){
+            //拼接弹幕文本的信息
+            var object = {
+                x:canvasEle.width,
+                y:Math.floor(Math.random() * canvasEle.height),
+                text:document.getElementById('text').value,
+                speed:Math.floor(Math.random() * 2 + 1),
+                color:document.getElementById('color').value,
+                size:document.getElementById('size').value
+            };
+            //如果要控制弹幕的数量的话，先行进行判断，如果数量没有
+            //超过指定的数量，则直接添加，否则删除前面的弹幕
+            //将弹幕文本的信息添加到barrages数组内
+            barrages.push(object);
+            if(barrages.length > count){
+                barrages.splice(0,1);
+            }
+            //console.log(barrages.length);
+        }
+        
+    </script>
+</body>
+</html>

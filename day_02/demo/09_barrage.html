@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #canvas{
+            border:1px solid #ccc;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="600" height="400" id="canvas"></canvas>
+    <p style="text-align: center;">
+        <button onclick="play()">显示弹幕</button>
+        <button onclick="stop()">关闭弹幕</button>
+    </p>
+    <script>
+        //requestAnimationFrame的ID
+        var timerId;
+        //标识当前是否正在播放
+        var playing = false;
+        var canvasEle = document.getElementById('canvas');
+        var ctx = canvasEle.getContext('2d');
+        //存储弹幕的内容信息
+        var messages = [
+            '我来了',
+            '大家好',
+            '这个男一号是谁呀?',
+            '不好看',
+            '这个剧情不错',
+            '动人心弦'
+        ];
+        //存储弹幕文本的完整信息(每个文本包含内容、坐标、速度、颜色等) 
+        var barrages = [];
+        messages.forEach((item)=>{
+            barrages.push({
+                x:canvasEle.width,
+                y:Math.floor(Math.random() * canvasEle.height),
+                text:item,
+                speed:Math.floor(Math.random() * 3) + 1
+            });
+        });
+        //绘制弹幕
+        function  draw(){
+            //console.log(barrages);
+            //擦除画布之前绘制的所有内容
+            ctx.clearRect(0,0,canvasEle.width,canvasEle.height);
+            //修改字体属性
+            ctx.font = '18px Microsoft Yahei';
+            //修改填充颜色
+            ctx.fillStyle = 'red';
+            //循环绘制弹幕
+            barrages.forEach((item)=>{
+                item.x -= item.speed;
+                ctx.fillText(item.text,item.x,item.y);
+                //判断文本的水平位置
+                if(item.x < -(ctx.measureText(item.text).width)){
+                    item.x = canvasEle.width;
+                }
+            }); 
+
+            timerId = window.requestAnimationFrame(draw);
+        }
+        function play(){
+            if(playing == false){
+                playing = true;
+                draw();
+            }
+        }
+        function stop(){
+            playing = false;
+            window.cancelAnimationFrame(timerId);
+        }
+    </script>
+</body>
+</html>
