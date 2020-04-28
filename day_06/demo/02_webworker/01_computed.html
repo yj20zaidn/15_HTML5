@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellpadding="10" cellspacing="0" border="1" align="center">
+        <tr>
+            <td width="80">请输入数字</td>
+            <td>
+                <input type="text" id="number">
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <button onclick="computed()">计算</button>
+            </td>
+        </tr>
+        <tr>
+            <td id="result" colspan="2"></td>
+        </tr>
+    </table>
+    <script>
+        function computed(){
+            //获取数字输入框元素
+            var numberEle = document.getElementById('number');
+
+            //获取数字输入框元素的值
+            var numberVal = numberEle.value;
+
+            //创建worker线程
+            var worker = new Worker('scripts/worker.js');
+            
+            //将获取到的数字抛给worker线程
+            worker.postMessage(numberVal);
+
+            //侦听worker线程的消息
+            worker.onmessage = function(e){
+                //获取worker线程的计算结果
+                var result = e.data;
+
+                //通过主线程操作DOM对象
+                document.getElementById('result').innerText = result;
+            }
+        }
+    </script>
+</body>
+</html>
