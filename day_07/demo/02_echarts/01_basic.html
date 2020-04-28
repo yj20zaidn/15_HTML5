@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #chart{
+            width:900px;
+            height:600px;
+            margin:0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <script src="scripts/echarts.min.js"></script>
+    <script>
+        //获取DIV元素
+        var divEle = document.getElementById('chart');
+
+        //创建图表实例
+        var chartInstance = echarts.init(divEle);
+
+        var option = {
+            //标题组件
+            title:{
+                //主标题文本
+                text:'京东商城2020年4月份销售统计图',
+                //主标题链接
+                link:'http://www.jd.com',
+                //主标题链接的窗口形式
+                target:'blank',
+                //主标题文本样式
+                textStyle:{
+                    fontFamily:'Microsoft Yahei',
+                    fontSize:24
+                },
+                //副标题文本
+                subtext:'报表人:吴华',
+                //副标题链接
+                sublink:'http://www.sina.com.cn',
+                //副标题链接的窗口形式
+                subtarget:'blank',
+                //副标题文本样式
+                subtextStyle:{
+                    fontFamily:'Microsoft Yahei',
+                    fontSize:16
+                },
+                //标题组件居中
+                left:'center'
+            },
+            //X轴组件
+            xAxis:{
+                //X轴类型:类目轴
+                type:'category',
+                //X轴数据:
+                data:
+                [
+                    '家用电器',
+                    '手机数码', 
+                    //单独强调"电脑办公"
+                    {
+    	            value:'电脑办公',
+                    textStyle:{
+                        fontFamily:'Microsoft Yahei',
+                        fontSize:16,
+                        color:'#f00'
+                        }
+                    },
+                    '家居家具',
+                    '男装女装'
+                ],
+                //坐标轴位置
+                position:'bottom'
+            },
+            //Y轴组件
+            yAxis:{
+                type:'value',
+                axisLabel:{
+                    formatter:`{value}万元`
+                }
+            },
+            //系列组件
+            series:[
+                {
+                    type:'bar',
+                    data:[180,300,210,199,370]
+                }
+            ]
+        }
+        //为图表实例添加配置项
+        chartInstance.setOption(option);
+    </script>
+</body>
+</html>
