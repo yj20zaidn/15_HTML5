@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>sessionStorage</h1>
+    <script>
+        //存储数据到sessionStorage
+        sessionStorage.setItem('userId',5);
+        sessionStorage.setItem('nickname','Tom');
+        sessionStorage.setItem('password','12345');
+
+        //获取usename及id的键名
+        console.log(sessionStorage.getItem('nickname'));
+        console.log(sessionStorage.getItem('userId'));
+    </script>
+</body>
+</html>

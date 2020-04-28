@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>拖动上传</title>
+		<link rel="stylesheet" href="styles/reset.css">
+		<style>
+		body{
+			font-family: Roboto, sans-serif;
+			color: #0f3c4b;
+			background-color: #e5edf1;
+			padding:20px;
+		}
+		.container {
+			width: 100%;
+			max-width: 680px;
+			text-align: center;
+			margin: 0 auto;
+		}
+		#drop-region {
+			background-color: #fff;
+			border-radius:5px;
+			box-shadow:0 0 35px rgba(0,0,0,0.05);
+			padding:60px 40px;
+			text-align: center;
+			cursor:pointer;
+			transition:.3s;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="drop-region">
+				拖动上传
+			</div>
+		</div>
+	</body>
+	<script src="scripts/axios.min.js"></script>
+	<script>
+		//获取目标区域对象
+		var dropRegionEle = document.getElementById('drop-region');
+
+		//在目标区域悬停时触发
+		dropRegionEle.addEventListener('dragover',function(event){
+			event.preventDefault();
+			event.stopPropagation();
+		});
+
+
+		//在目标区域内释放时触发
+		dropRegionEle.addEventListener('drop',function(event){
+
+			//阻止默认行为及事件冒泡
+			event.preventDefault();
+			event.stopPropagation();
+
+			//获取FileList对象(集合)(想像成<input type="file">,可能是多个)
+			var files = event.dataTransfer.files;
+
+			//创建FormData对象(想像成<form></form>)
+			var formData = new FormData();
+
+			if(files.length){
+				//将FileList中的成员存放到表单中(想像成在<form>内书写多个<input type="file">)
+				for(var n=0;n<files.length;n++){
+					formData.append('face',files[n]);
+				}
+				
+				//通过axios上传
+				axios.post('http://127.0.0.1:8080/drag',formData);
+			}
+			
+		});
+	</script>
+</html> 

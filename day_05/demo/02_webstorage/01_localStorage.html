@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>localStorage</h1>
+    <script>
+        //存储数据到localStorage
+        localStorage.setItem('id',5);
+        localStorage.setItem('username','Tom');
+        localStorage.setItem('isLogined',true);
+
+        console.log('localStorage中的数据项有'　+ localStorage.length);
+        
+        //获取usename及id的键名
+        console.log(localStorage.getItem('username'));
+        console.log(localStorage.getItem('id'));
+
+        //删除id
+        localStorage.removeItem('id');
+
+        console.log('localStorage中的数据项有'　+ localStorage.length);
+        
+        //尝试输出信息
+        console.log(localStorage.getItem('id'));
+
+    </script>
+</body>
+</html>
