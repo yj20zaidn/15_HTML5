@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #source {
+            width:100px;
+            height:100px;
+            border:2px solid #000;
+            margin: 10px auto;
+        }
+        #target{
+            width:100px;
+            height:100px;
+            border:2px solid #00f;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div style="width:200px;margin:0 auto;border:2px solid #0f0">
+        <p draggable="true" id="source">
+            拽我呀
+        </p>
+    </div>
+    <p id="target"></p>
+    <script>
+        //源对象
+        var sourceEle = document.getElementById('source');
+        //目标对象
+        var targetEle = document.getElementById('target');
+       
+        //开始拖动时触发
+        sourceEle.ondragstart = function(event){
+            event.dataTransfer.setData('username',event.target.innerText);
+            //console.log('你开始拽我了呀');
+        }
+      
+        //拖放过程中触发
+        sourceEle.ondrag = function(){
+            //console.log('你准备把我拽到哪儿呀');
+        }
+
+        //在源对象进入目标对象时触发
+        targetEle.ondragenter = function(){
+            //console.log('你来了呀');
+        }
+
+        //源对象在目标对象范围内悬停时触发
+          targetEle.ondragover = function(event){
+            event.preventDefault();
+            //console.log('你现在在我们地盘上飞呢');
+        }
+
+        //源对象拖动离开目标对象范围内时触发
+        targetEle.ondragleave = function(){
+            //console.log('你怎么走了吧，再聊会呗');
+        }
+
+        //源对象在目标对象上释放时触发
+        targetEle.ondrop = function(event){
+            //阻止在当前标签页打开
+            event.preventDefault();
+            //阻止新开标签页
+            event.stopPropagation();
+            //将DataTransfer对象的数据放置到目标对象上来
+            event.target.innerText = event.dataTransfer.getData('username');
+            //console.log(Math.random());
+        }
+        
+        //拖放结束后触发
+        sourceEle.ondragend = function(event){
+            //console.log('累了吧，不拽了吧！');
+            event.target.remove();
+        }
+    </script>
+</body>
+</html>

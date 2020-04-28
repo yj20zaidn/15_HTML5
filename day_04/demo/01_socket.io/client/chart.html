@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>微信聊天室</title>
+		<link rel="stylesheet" href="styles/normalize.css">
+		<link rel="stylesheet" href="styles/reset.css">
+		<link rel="stylesheet" href="styles/chart.css">
+	</head>
+	<body>
+		<div id="chart-container">
+			<div class="chart-user-list" id="chart-user-list">
+				<!-- <div class="user-item">
+					<img src="images/avatar/15.jpg" alt="">
+					未知名
+				</div> -->
+			</div>
+			<div class="chart-main-area">
+				<div class="chart-main-title">
+					<h1>微信聊天室(<span id="userNumber"></span>人)-<span id="currentUser"></span></h1>
+				</div>
+				<!-- 聊天内容列表开始 -->
+				<div class="chart-list" id="chart-list">
+					<div class="user-logined" id="user-logined"><span id="logined-user"></span>上线了</div>
+					<!-- <div class="chart-item">
+						<div class="user-face"><img src="images/avatar/11.jpg" alt=""></div>
+						<div class="user-message">111</div>
+					</div> -->
+					
+				</div>
+				<!-- 聊天内容列表结束 -->
+				<div class="chart-form">
+					<div>
+						<textarea class="chart-form-message" id="message"></textarea>
+					</div>
+					<div>
+						<input type="button" id="send" class="chart-form-send" value="发表" onclick="send()">
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="scripts/socket.io.js"></script>
+		<script>
+
+			//生成用户列表
+			//users代表存储用户信息的数组,每个用户成员是包含三个信息的对象
+			//id,username,face
+			function genrateUserList(users){
+				//删除之前的用户列表
+				var chartUserListEle = document.getElementById('chart-user-list');
+				for(var n = chartUserListEle.childNodes.length-1;n>=0;n--){
+					chartUserListEle.removeChild(chartUserListEle.childNodes[n]);
+				}
+				//重新构建用户列表
+				for(var n = 0;n<users.length;n++){
+					//用户对象(包含id、username、face三个属性)
+					var user = users[n];
+					var userItemEle = document.createElement('div');
+					userItemEle.className = 'user-item';
+					userItemEle.innerHTML = '<img src="images/avatar/' + user.face +'">' + decodeURI(user.username);
+					chartUserListEle.appendChild(userItemEle);
+				}
+			}
+
+			var faceFlag = [
+				'[微笑]',
+				'[早]',
+				'[火]',
+				'[运动]',
+				'[不高兴]',
+				'[打]',
+				'[坏笑]',
+				'[吃]'
+			];
+			var faceImage = [
+				'c31f1d5643aba27af7dd213c58f4bea8.gif',
+				'ff18ec4db084654c98c436cf89d230d6.gif',
+				'669880ad240bb99d338407e02e7dbc09.gif',
+				'6ad8620a24a200b4952acecece62e7cd.gif',
+				'91713db4ae8436d048ee59e2192f61a8.gif',
+				'8a33304210407c59442020b21cf5b35b.gif',
+				'47d40910721790b913d99737a2ccea36.gif',
+				'c49cbc33236b373368a91896a49ab9f3.gif',
+			]
+
+			//初始状态下,隐藏"XXX上线了"DIV元素
+			document.getElementById('user-logined').style.display = 'none';
+			
+			//创建socket客户端
+			var client = io('ws://127.0.0.1:5000');
+			
+			//侦听服务器的"welcome new user"事件
+			//当侦听到服务器的事件后，显示"XXXX上线了"
+			client.on('welcome new user',(data)=>{
+				
+				//显示"XXX上线了"DIV元素
+				document.getElementById('user-logined').style.display = 'block';
+				//
+				document.getElementById('userNumber').innerText = data.count;
+				//控制span元素的显示的用户昵称信息
+				//(来源于是服务器广播时返回的数据)
+				document.getElementById('logined-user').innerText = decodeURI(data.username);
+				genrateUserList(data.users);
+				//5秒后隐藏"XXX上线了"DIV元素
+				window.setTimeout(()=>{
+					document.getElementById('user-logined').style.display = 'none';
+				},5000);
+			});
+			//faceFlag = [微笑],[坏笑],[早]...
+			//             0     1      2
+			/**
+			* 替换消息中的表情
+			* @string代表消息
+			*/
+			function replaceFace(string){
+				faceFlag.forEach((item,index)=>{
+					//[微笑]  ==> //\[微笑\]
+					item = item.replace('[','\\[').replace(']','\\]');
+					//正则表达式对象，进行全局替换
+					regExp = new RegExp(item,"g") ;
+					string = string.replace(regExp,'<img src="images/face/' + faceImage[index] +'">');
+				});
+				return string;
+			}
+
+			//侦听服务器boast message事件
+			client.on('boast message',(data)=>{
+				var divEle = document.createElement('div');
+				divEle.className = 'chart-item';
+				var message = decodeURI(data.message);
+				//调用replaceFace()函数将服务器返回的消息中的表情文本进行替换
+				message = replaceFace(message);
+				
+				//console.log(message);
+				divEle.innerHTML = `
+							<div class="user-face">
+							<img src="images/avatar/${data.face}" alt="">
+							</div>
+							<div class="user-message">
+								${message}
+							</div>`;
+				document.getElementById('chart-list').appendChild(divEle);
+			});
+
+			//获取地址栏URL问号之后的参数
+			var str = location.search.substr(1);
+
+			//对于参数按&(读作And)进行拆分
+			var array = str.split('&');
+
+			//获取用户名信息
+			var username = array[0].split('=')[1];
+
+			//获取用户头像
+			var face = array[1].split('=')[1];
+
+			//获取用户名ID
+			var id = array[2].split('=')[1];
+
+			//页面加载完成后立即由客户端向服务器发送广播
+			document.body.onload = function(){			
+				//由客户端向服务器发送广播
+				client.emit('user logined',{
+					username:username,
+					id:id,
+					face:face
+				});
+			}
+
+			//单击"发表"按钮时，向服务器发送广播
+
+			function send(){
+				//console.log(replaceFace('[微笑][坏]'));
+				//获取发表的内容
+				var messageEle = document.getElementById('message');
+				var messageVal = messageEle.value.trim();
+				if(messageVal.length > 0){
+					//向服务器发送广播事件
+					client.emit('send message',{message:messageVal,face:face});
+					//清空内容
+					messageEle.value = ''
+				}
+			}
+
+			client.on('user leave',(data)=>{
+				document.getElementById('userNumber').innerText = data.count;
+				genrateUserList(data.users);
+			});
+
+		</script>
+	</body>
+</html>
